@@ -117,7 +117,19 @@ func usersListHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	t.ExecuteTemplate(w, "users", users)
+	sessID := utils.Cookie(r, "sessID")
+	var currentUser *models.User
+	if sessID != "" {
+		currentUser, err = models.GetCurrentUser(sessID)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+	data := map[string]interface{}{
+		"users":       users,
+		"currentUser": currentUser,
+	}
+	t.ExecuteTemplate(w, "users", data)
 }
 
 func showUserProfile(w http.ResponseWriter, r *http.Request) {
@@ -125,9 +137,6 @@ func showUserProfile(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(405), 405)
 		return
 	}
-
-	sessID := utils.Cookie(r, "sessID")
-	fmt.Println(sessID)
 
 	t, err := template.ParseFiles(
 		"templates/header.html",
@@ -144,11 +153,12 @@ func showUserProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := map[string]interface{}{"id": usr.ID,
+	data := map[string]interface{}{
+		"id":        usr.ID,
 		"email":     usr.Email,
 		"firstname": usr.Firstname,
 		"lastname":  usr.Lastname,
-		"sessID":    string(sessID)}
+	}
 
 	t.ExecuteTemplate(w, "profile", data)
 }

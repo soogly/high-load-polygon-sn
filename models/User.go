@@ -87,8 +87,8 @@ func LoginUser(email string, password string) (*Session, error) {
 	usr := new(User)
 	var hashedPswrd string
 
-	row := db.QueryRow("SELECT id, firstname, lastname, password FROM users WHERE email = $1", email)
-	err := row.Scan(&usr.ID, &usr.Firstname, &usr.Lastname, &hashedPswrd)
+	row := db.QueryRow("SELECT id, firstname, lastname, email, password FROM users WHERE email = $1", email)
+	err := row.Scan(&usr.ID, &usr.Firstname, &usr.Lastname, &usr.Email, &hashedPswrd)
 	if err != nil && err == sql.ErrNoRows {
 		return nil, errors.New("wrong email")
 	}
@@ -99,4 +99,19 @@ func LoginUser(email string, password string) (*Session, error) {
 		return CreateSession(usr.ID)
 	}
 	return nil, errors.New("wrong pass")
+}
+
+// GetCurrentUser взять текущего юзера из сессии
+func GetCurrentUser(sessID string) (*User, error) {
+	usr := new(User)
+	row := db.QueryRow(`SELECT id, firstname, lastname, email FROM users 
+						WHERE id = (SELECT s.user_id FROM sessions s WHERE 
+									s.sessid = $1 
+									AND s.expires >= CURRENT_TIMESTAMP
+									ORDER BY expires DESC LIMIT 1)`, sessID)
+	err := row.Scan(&usr.ID, &usr.Firstname, &usr.Lastname, &usr.Email)
+	if err != nil && err == sql.ErrNoRows {
+		return nil, errors.New("no sessions")
+	}
+	return usr, err
 }
