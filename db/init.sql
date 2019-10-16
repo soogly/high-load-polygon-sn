@@ -1,0 +1,6 @@
+
+CREATE USER go_app WITH PASSWORD 'go_pass';
+CREATE DATABASE go_app_db WITH OWNER go_app;
+
+GRANT ALL PRIVILEGES ON DATABASE go_app_db TO go_app;
+
