@@ -35,3 +35,9 @@ func CreateSession(userID int) (*Session, error) {
 
 	return sess, err
 }
+
+// CloseSession закрываем сессию
+func CloseSession(sessID string) error {
+	_, err := db.Exec("UPDATE sessions SET expires = CURRENT_TIMESTAMP WHERE sessid = $1", sessID)
+	return err
+}

@@ -5,7 +5,11 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8"></div>
-        <div class="col-md-4">Current User: {{ .currentUser.Email }}</div>
+        {{ if .currentUser }}
+        <div class="col-md-4">Текущий Пользователь: {{ .currentUser.Email }}</div>
+        {{ else }}
+        <div class="col-md-4">Вы не авторизованы</div>
+        {{ end }}
     </div>
     <div class="content">
         {{ range .users }}    

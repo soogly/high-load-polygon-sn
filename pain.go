@@ -26,6 +26,7 @@ func main() {
 	http.HandleFunc("/registration", registrationHandler)
 	http.HandleFunc("/register-user", createUserHandler)
 	http.HandleFunc("/login", loginUserHandler)
+	http.HandleFunc("/logout", logoutUserHandler)
 
 	// Ждем запросы и раздаем
 
@@ -201,4 +202,18 @@ func loginUserHandler(w http.ResponseWriter, r *http.Request) {
 		http.SetCookie(w, sessCook)
 		http.Redirect(w, r, newURL, http.StatusSeeOther)
 	}
+}
+
+func logoutUserHandler(w http.ResponseWriter, r *http.Request) {
+
+	sessID := utils.Cookie(r, "sessID")
+	if sessID != "" {
+		err := models.CloseSession(sessID)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+	sessCook := &http.Cookie{Name: "sessID", Value: "", HttpOnly: false}
+	http.SetCookie(w, sessCook)
+	http.Redirect(w, r, "login", http.StatusSeeOther)
 }
