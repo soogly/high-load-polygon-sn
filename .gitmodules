@@ -1,0 +1,3 @@
+[submodule "amphora"]
+	path = amphora
+	url = https://github.com/soogly/amphora.git
