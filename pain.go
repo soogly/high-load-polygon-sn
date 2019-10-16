@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/hl/models"
+	"github.com/hl/utils"
 )
 
 func main() {
@@ -125,6 +126,9 @@ func showUserProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	sessID := utils.Cookie(r, "sessID")
+	fmt.Println(sessID)
+
 	t, err := template.ParseFiles(
 		"templates/header.html",
 		"templates/profile.html",
@@ -140,7 +144,11 @@ func showUserProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := map[string]interface{}{"id": usr.ID, "email": usr.Email, "firstname": usr.Firstname, "lastname": usr.Lastname}
+	data := map[string]interface{}{"id": usr.ID,
+		"email":     usr.Email,
+		"firstname": usr.Firstname,
+		"lastname":  usr.Lastname,
+		"sessID":    string(sessID)}
 
 	t.ExecuteTemplate(w, "profile", data)
 }

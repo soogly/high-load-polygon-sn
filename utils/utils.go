@@ -2,6 +2,7 @@ package utils
 
 import (
 	"log"
+	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -33,4 +34,13 @@ func ComparePasswords(hashedPwd string, plainPwd []byte) bool { // Since we'll b
 	}
 
 	return true
+}
+
+// Cookie берем куки по имени
+func Cookie(r *http.Request, name string) string {
+	c, err := r.Cookie(name)
+	if err != nil {
+		return ""
+	}
+	return c.Value
 }
