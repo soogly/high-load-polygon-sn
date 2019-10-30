@@ -9,7 +9,7 @@ set -e
 # If you run that script not the first time 
 # su postgres -c "psql -d postgres < ./db/clear.sql"
 
-mysql < ./db/clear.sql
+# mysql < ./db/clear.sql
 
 # init db
 # su postgres -c "psql -U postgres < ./db/init.sql && \
@@ -20,7 +20,9 @@ mysql go_app_db < ./db/tables.sql
 # build app
 # go build main.go
 
-# run app
+# run app09(((((((((((((?KIO378793)))))))))))))
 ./pain
 
 exit 0
+
+

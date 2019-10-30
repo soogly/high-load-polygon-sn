@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/hl/utils"
 )
@@ -110,4 +111,48 @@ func GetCurrentUser(sessID string) (*User, error) {
 		return nil, errors.New("no sessions")
 	}
 	return usr, err
+}
+
+// SearchUsers взять текущего юзера из сессии
+func SearchUsers(query string) ([]*User, error) {
+
+	users := make([]*User, 0)
+
+	firstname, lastname := "", ""
+	s := strings.Split(query, " ")
+
+	if len(s) < 1 && len(s) > 2 {
+		return users, nil
+	} else if len(s) == 1 {
+		firstname = s[0] + "%"
+		lastname = ""
+		log.Println(firstname, lastname)
+	} else {
+		firstname, lastname = s[0]+"%", s[1]+"%"
+		log.Println(firstname, lastname)
+	}
+
+	rows, err := db.Query(`
+		SELECT id, email, firstname, lastname FROM users WHERE firstname LIKE ?
+		AND lastname LIKE ? ORDER BY id;`, firstname, lastname)
+
+	if err != nil {
+		log.Println("ooo")
+		log.Fatal(err)
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		usr := new(User)
+		err := rows.Scan(&usr.ID, &usr.Email, &usr.Firstname, &usr.Lastname)
+		if err != nil {
+			log.Fatal(err)
+		}
+		users = append(users, usr)
+	}
+	if err = rows.Err(); err != nil {
+		log.Fatal(err)
+	}
+	return users, err
 }

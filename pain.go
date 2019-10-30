@@ -27,6 +27,7 @@ func main() {
 	http.HandleFunc("/register-user", createUserHandler)
 	http.HandleFunc("/login", loginUserHandler)
 	http.HandleFunc("/logout", logoutUserHandler)
+	http.HandleFunc("/search-user", searchUserHandler)
 
 	// Ждем запросы и раздаем
 
@@ -204,6 +205,49 @@ func loginUserHandler(w http.ResponseWriter, r *http.Request) {
 		http.SetCookie(w, sessCook)
 		http.Redirect(w, r, newURL, http.StatusSeeOther)
 	}
+}
+
+func searchUserHandler(w http.ResponseWriter, r *http.Request) {
+
+	log.Println(r.Method)
+	if r.Method != "POST" {
+		renderLoginTemplate(w, nil)
+		return
+	}
+
+	t, err := template.ParseFiles(
+		"templates/header.html",
+		"templates/users.html",
+		"templates/footer.html")
+
+	if err != nil {
+		http.Error(w, http.StatusText(500), 500)
+		return
+	}
+
+	q := r.FormValue("search")
+	users, err := models.SearchUsers(q)
+
+	if err != nil {
+		http.Error(w, http.StatusText(523), 523)
+		return
+	}
+
+	sessID := utils.Cookie(r, "sessID")
+	var currentUser *models.User
+	if sessID != "" {
+		currentUser, err = models.GetCurrentUser(sessID)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+
+	data := map[string]interface{}{
+		"users":       users,
+		"currentUser": currentUser,
+	}
+
+	t.ExecuteTemplate(w, "users", data)
 }
 
 func logoutUserHandler(w http.ResponseWriter, r *http.Request) {
