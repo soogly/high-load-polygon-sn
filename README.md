@@ -4,7 +4,7 @@
 
 ## install requirements
 
-    go get github.com/lib/pq
+    go get github.com/go-sql-driver/mysql
 
 ## Build app:
 

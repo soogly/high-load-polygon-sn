@@ -8,7 +8,7 @@ import (
 // Session структура сессии
 type Session struct {
 	SessID string
-	UserID int
+	UserID int64
 }
 
 func init() {
@@ -26,18 +26,19 @@ func randStringRunes(n int) string {
 }
 
 // CreateSession создаем сессию и пишем в базу
-func CreateSession(userID int) (*Session, error) {
+func CreateSession(userID int64) (*Session, error) {
 	sess := new(Session)
 	sess.UserID = userID
 	sess.SessID = randStringRunes(20)
 
-	err := db.QueryRow("INSERT INTO sessions (sessid, user_id) values ($1, $2) RETURNING sessid", sess.SessID, userID).Scan(&sess.SessID)
+	_, err := db.Exec(`INSERT INTO sessions (sessid, user_id, expires)
+						values (?, ?, DATE_ADD(NOW(), INTERVAL 1 DAY))`, sess.SessID, userID)
 
 	return sess, err
 }
 
 // CloseSession закрываем сессию
 func CloseSession(sessID string) error {
-	_, err := db.Exec("UPDATE sessions SET expires = CURRENT_TIMESTAMP WHERE sessid = $1", sessID)
+	_, err := db.Exec("UPDATE sessions SET expires = CURRENT_TIMESTAMP WHERE sessid = ?", sessID)
 	return err
 }

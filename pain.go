@@ -126,10 +126,12 @@ func usersListHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 		}
 	}
+
 	data := map[string]interface{}{
 		"users":       users,
 		"currentUser": currentUser,
 	}
+
 	t.ExecuteTemplate(w, "users", data)
 }
 
@@ -187,7 +189,7 @@ func loginUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	email := r.FormValue("email")
 	password := r.FormValue("password")
-
+	log.Println(password)
 	session, err := models.LoginUser(email, password)
 
 	if err != nil || email == "" || password == "" {

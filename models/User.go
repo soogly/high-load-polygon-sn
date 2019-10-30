@@ -11,7 +11,7 @@ import (
 
 // User model
 type User struct {
-	ID        int
+	ID        int64
 	Email     string
 	Firstname string
 	Lastname  string
@@ -21,23 +21,17 @@ type User struct {
 func CreateUser(firstname string, lastname string, email string, password string) (*User, error) {
 
 	hashedPsswd := utils.HashAndSalt([]byte(password))
-	fmt.Println(hashedPsswd)
 
 	// userID that will be returned after SQL insertion
-	var userID int
 
-	err := db.QueryRow("INSERT INTO users (firstname, lastname, email, password) values ($1, $2, $3, $4 ) RETURNING id",
-		firstname, lastname, email, hashedPsswd).Scan(&userID)
+	result, err := db.Exec("INSERT INTO users (firstname, lastname, email, password) values (?, ?, ?, ?)",
+		firstname, lastname, email, hashedPsswd)
 
 	usr := new(User)
-	usr.ID = userID
+	usr.ID, _ = result.LastInsertId()
 	usr.Email = email
 	usr.Firstname = firstname
 	usr.Lastname = lastname
-
-	fmt.Println(lastname)
-	fmt.Println(err)
-	fmt.Println(lastname)
 
 	return usr, err
 
@@ -47,9 +41,11 @@ func CreateUser(firstname string, lastname string, email string, password string
 func UsersList() ([]*User, error) {
 
 	rows, err := db.Query("SELECT id, email, firstname, lastname FROM users")
+
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer rows.Close()
 
 	users := make([]*User, 0)
@@ -71,7 +67,7 @@ func UsersList() ([]*User, error) {
 func UserProfile(userID string) (*User, error) {
 
 	usr := new(User)
-	row := db.QueryRow("SELECT id, email, firstname, lastname FROM users WHERE id = $1", userID)
+	row := db.QueryRow("SELECT id, email, firstname, lastname FROM users WHERE id = ?", userID)
 	err := row.Scan(&usr.ID, &usr.Email, &usr.Firstname, &usr.Lastname)
 
 	if err != nil {
@@ -87,7 +83,7 @@ func LoginUser(email string, password string) (*Session, error) {
 	usr := new(User)
 	var hashedPswrd string
 
-	row := db.QueryRow("SELECT id, firstname, lastname, email, password FROM users WHERE email = $1", email)
+	row := db.QueryRow("SELECT id, firstname, lastname, email, password FROM users WHERE email = ?", email)
 	err := row.Scan(&usr.ID, &usr.Firstname, &usr.Lastname, &usr.Email, &hashedPswrd)
 	if err != nil && err == sql.ErrNoRows {
 		return nil, errors.New("wrong email")
@@ -106,7 +102,7 @@ func GetCurrentUser(sessID string) (*User, error) {
 	usr := new(User)
 	row := db.QueryRow(`SELECT id, firstname, lastname, email FROM users 
 						WHERE id = (SELECT s.user_id FROM sessions s WHERE 
-									s.sessid = $1 
+									s.sessid = ? 
 									AND s.expires >= CURRENT_TIMESTAMP
 									ORDER BY expires DESC LIMIT 1)`, sessID)
 	err := row.Scan(&usr.ID, &usr.Firstname, &usr.Lastname, &usr.Email)
