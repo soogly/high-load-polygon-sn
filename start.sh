@@ -20,7 +20,7 @@ mysql go_app_db < ./db/tables.sql
 # build app
 # go build main.go
 
-# run app09(((((((((((((?KIO378793)))))))))))))
+# run app
 ./pain
 
 exit 0
