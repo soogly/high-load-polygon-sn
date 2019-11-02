@@ -1,6 +1,13 @@
 #!/bin/bash
 
-for ((i=10; i<=1000; i*=10))
+for ((i=1; i<=1000; i*=10))
 do 
-    source $1 8 $i 30 
+    if [[ $i == 1 ]]
+    then
+        p=1
+    else
+        p=8
+    fi
+    source $1 $p $i 30 100
+    sleep 1
 done

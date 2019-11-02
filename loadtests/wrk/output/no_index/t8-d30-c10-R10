@@ -1,0 +1,16 @@
+Running 30s test @ http://95.213.237.186/search-user?search?mar%20kar
+  8 threads and 10 connections
+  Thread calibration: mean lat.: 2803.858ms, rate sampling interval: 7569ms
+  Thread calibration: mean lat.: 2771.968ms, rate sampling interval: 7569ms
+  Thread calibration: mean lat.: 2762.605ms, rate sampling interval: 7573ms
+  Thread calibration: mean lat.: 2810.002ms, rate sampling interval: 7782ms
+  Thread calibration: mean lat.: 2816.438ms, rate sampling interval: 7782ms
+  Thread calibration: mean lat.: 2800.640ms, rate sampling interval: 7639ms
+  Thread calibration: mean lat.: 2803.712ms, rate sampling interval: 7688ms
+  Thread calibration: mean lat.: 2696.704ms, rate sampling interval: 7565ms
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     8.66s     2.24s   12.31s    60.00%
+    Req/Sec     0.00      0.00     0.00    100.00%
+  176 requests in 30.02s, 0.87MB read
+Requests/sec:      5.86
+Transfer/sec:     29.80KB
