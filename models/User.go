@@ -137,8 +137,9 @@ func SearchUsers(query string) ([]*User, error) {
 		AND lastname LIKE ? ORDER BY id;`, firstname, lastname)
 
 	if err != nil {
-		log.Println("ooo")
-		log.Fatal(err)
+		log.Println("serach user")
+		log.Println(err)
+		// log.Fatal(err)
 	}
 
 	defer rows.Close()
