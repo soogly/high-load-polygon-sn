@@ -125,7 +125,7 @@ func SearchUsers(query string) ([]*User, error) {
 		return users, nil
 	} else if len(s) == 1 {
 		firstname = s[0] + "%"
-		lastname = ""
+		lastname = firstname
 		log.Println(firstname, lastname)
 	} else {
 		firstname, lastname = s[0]+"%", s[1]+"%"
@@ -134,7 +134,7 @@ func SearchUsers(query string) ([]*User, error) {
 
 	rows, err := db.Query(`
 		SELECT id, email, firstname, lastname FROM users WHERE firstname LIKE ?
-		AND lastname LIKE ? ORDER BY id;`, firstname, lastname)
+		OR lastname LIKE ? ORDER BY id;`, firstname, lastname)
 
 	if err != nil {
 		log.Println("serach user")
