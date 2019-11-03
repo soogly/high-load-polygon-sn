@@ -126,10 +126,8 @@ func SearchUsers(query string) ([]*User, error) {
 	} else if len(s) == 1 {
 		firstname = s[0] + "%"
 		lastname = firstname
-		log.Println(firstname, lastname)
 	} else {
 		firstname, lastname = s[0]+"%", s[1]+"%"
-		log.Println(firstname, lastname)
 	}
 
 	rows, err := db.Query(`
@@ -148,12 +146,14 @@ func SearchUsers(query string) ([]*User, error) {
 		usr := new(User)
 		err := rows.Scan(&usr.ID, &usr.Email, &usr.Firstname, &usr.Lastname)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
+			// log.Fatal(err)
 		}
 		users = append(users, usr)
 	}
 	if err = rows.Err(); err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		// log.Fatal(err)
 	}
 	return users, err
 }
