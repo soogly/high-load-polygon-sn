@@ -1,9 +1,0 @@
-Running 30s test @ http://95.213.237.186/search-user?search?mar%20kar
-  1 threads and 1 connections
-  Thread calibration: mean lat.: 3933.469ms, rate sampling interval: 13705ms
-  Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    15.52s     4.67s   23.53s    54.76%
-    Req/Sec     2.00      0.00     2.00    100.00%
-  64 requests in 30.01s, 325.36KB read
-Requests/sec:      2.13
-Transfer/sec:     10.84KB

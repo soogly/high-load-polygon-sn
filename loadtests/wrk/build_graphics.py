@@ -5,14 +5,27 @@ import numpy as np
 
 path = os.path.dirname(os.path.abspath(__file__))
 output_dir = os.path.join(path, 'output')
-files = os.listdir(os.path.join(output_dir, 'with_index'))
+users_dir = os.path.join(output_dir, 'users')
+
+testing_module = 'search-users'
+module_dir = os.path.join(users_dir, testing_module)
+
+
+# testing_set = 'no_index_OR'
+# testing_set = 'with_index_OR'
+
+# testing_set = 'no_index_UNION'
+testing_set = 'with_index_UNION'
+
+
+files = os.listdir(os.path.join(module_dir, testing_set))
 
 data = []
 for fname in files:
     params = fname.split("-")
-    if len(params) == 4 and fname.endswith('R10'):
+    if len(params) == 4 and params[1] == "d60" and fname.endswith('R1'):
         bar = {"conn": int([p[1:] for p in params if p.startswith('c')][0])}
-        with open(os.path.join(os.path.join(output_dir, 'with_index'), fname), 'r') as f:
+        with open(os.path.join(os.path.join(module_dir, testing_set), fname), 'r') as f:
             for line in f.readlines():
                 line = line.split()
                 if line[0] == 'Latency':
@@ -34,16 +47,11 @@ errs = [int(d.get('err')) if d.get('err') else 0 for d in data]
 total_reqs = [int(d['total_reqs']) for d in data]
 success_reqs = [t-e for t, e in zip(total_reqs, errs)]
 
-# succ_reqs = []
-# for req, err in zip(reqs, errs):
-#     succ_reqs.append(req - err)
-# print(errs)
-
 plt.style.use('seaborn')
 plt.figure(figsize=(12, 7))
 
 plt.subplot(131)
-plt.gca().set_title('latency (ms)')
+plt.gca().set_title('Max latency (ms)')
 plt.xlabel('connections')
 plt.bar(conns, latency)
 
@@ -62,5 +70,5 @@ p2 = plt.bar(conns, errs, hatch='//')
 
 plt.legend((p1[0], p2[0]), ('Success requests', 'Non-2xx or 3xx responses'))
 
-plt.suptitle('Latency & Requsts p/s with Indexes')
+plt.suptitle(f'Latency & Requsts p/s [{testing_set}]')
 plt.show()

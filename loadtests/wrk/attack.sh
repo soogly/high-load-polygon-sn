@@ -8,6 +8,6 @@ do
     else
         p=8
     fi
-    source $1 $p $i 30 100
-    sleep 1
+    source $1 $p $i 60 1
+    sleep 10
 done

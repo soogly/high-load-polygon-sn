@@ -121,16 +121,22 @@ func SearchUsers(query string) ([]*User, error) {
 	firstname, lastname := "", ""
 	s := strings.Split(query, " ")
 
+	log.Println(len(s))
+
 	if len(s) < 1 && len(s) > 2 {
 		return users, nil
 	} else if len(s) == 1 {
 		firstname = s[0] + "%"
 		lastname = firstname
-		query = `(SELECT id, email, firstname, lastname FROM users WHERE firstname LIKE ?) 
-				 UNION ALL
-				 (SELECT id, email, firstname, lastname FROM users WHERE lastname LIKE ?)
-				 ORDER BY id;`
+		log.Println("horosho")
+
+		log.Println(firstname, lastname)
+		query = `(SELECT id, email, firstname, lastname FROM users WHERE firstname LIKE ? ORDER BY id)
+				  UNION ALL 
+				 (SELECT id, email, firstname, lastname FROM users WHERE lastname LIKE ? ORDER BY id);`
 	} else {
+		log.Println("ploho")
+
 		firstname, lastname = s[0]+"%", s[1]+"%"
 		query = `SELECT id, email, firstname, lastname FROM users WHERE firstname LIKE ?
 				 AND lastname LIKE ? ORDER BY id;`

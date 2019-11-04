@@ -1,0 +1,18 @@
+Running 1m test @ http://95.213.237.186/search-user
+  8 threads and 1000 connections
+  Thread calibration: mean lat.: 9223372036854776.000ms, rate sampling interval: 10ms
+  Thread calibration: mean lat.: 9223372036854776.000ms, rate sampling interval: 10ms
+  Thread calibration: mean lat.: 2483.200ms, rate sampling interval: 4968ms
+  Thread calibration: mean lat.: 9223372036854776.000ms, rate sampling interval: 10ms
+  Thread calibration: mean lat.: 2791.424ms, rate sampling interval: 5730ms
+  Thread calibration: mean lat.: 2400.000ms, rate sampling interval: 6492ms
+  Thread calibration: mean lat.: 3090.432ms, rate sampling interval: 6541ms
+  Thread calibration: mean lat.: 1947.136ms, rate sampling interval: 3895ms
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    31.63s     5.96s   36.50s    88.89%
+    Req/Sec     0.01      0.82   100.00     99.99%
+  20 requests in 1.01m, 7.27KB read
+  Socket errors: connect 0, read 570, write 0, timeout 28740
+  Non-2xx or 3xx responses: 20
+Requests/sec:      0.33
+Transfer/sec:     122.80B

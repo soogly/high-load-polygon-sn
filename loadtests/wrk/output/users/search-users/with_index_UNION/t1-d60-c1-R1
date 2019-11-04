@@ -1,0 +1,9 @@
+Running 1m test @ http://95.213.237.186/search-user
+  1 threads and 1 connections
+  Thread calibration: mean lat.: 2251.552ms, rate sampling interval: 5844ms
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     4.85s     1.49s    7.11s    52.17%
+    Req/Sec     0.38      0.48     1.00    100.00%
+  54 requests in 1.00m, 28.89MB read
+Requests/sec:      0.90
+Transfer/sec:    492.91KB
