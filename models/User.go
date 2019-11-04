@@ -126,8 +126,10 @@ func SearchUsers(query string) ([]*User, error) {
 	} else if len(s) == 1 {
 		firstname = s[0] + "%"
 		lastname = firstname
-		query = `SELECT id, email, firstname, lastname FROM users WHERE firstname LIKE ?
-				 OR lastname LIKE ? ORDER BY id;`
+		query = `(SELECT id, email, firstname, lastname FROM users WHERE firstname LIKE ?) 
+				 UNION ALL
+				 (SELECT id, email, firstname, lastname FROM users WHERE lastname LIKE ?)
+				 ORDER BY id;`
 	} else {
 		firstname, lastname = s[0]+"%", s[1]+"%"
 		query = `SELECT id, email, firstname, lastname FROM users WHERE firstname LIKE ?
