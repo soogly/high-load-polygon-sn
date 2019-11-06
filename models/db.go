@@ -12,7 +12,7 @@ var db *sql.DB
 
 func init() {
 	var err error
-	db, err = sql.Open("mysql", "go_app:go_pass@/go_app_db")
+	db, err = sql.Open("mysql", "go_app:go_pass@tcp(mysqlmaster:3306)/go_app_db")
 	if err != nil {
 		log.Fatal(err)
 	}
