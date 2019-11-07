@@ -15,7 +15,7 @@ module_dir = os.path.join(users_dir, testing_module)
 # testing_set = 'with_index_OR'
 
 # testing_set = 'no_index_UNION'
-testing_set = 'with_index_UNION'
+testing_set = 'repl_idx_UNION'
 
 
 files = os.listdir(os.path.join(module_dir, testing_set))
