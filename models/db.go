@@ -8,12 +8,18 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-var db *sql.DB
+var dbS *sql.DB
+var dbM *sql.DB
 
 func init() {
 	var err error
-	db, err = sql.Open("mysql", "go_app:go_pass@tcp(mysqlmaster:3306)/go_app_db")
+	dbM, err = sql.Open("mysql", "go_app:go_pass@tcp(mysqlmaster:3306)/go_app_db")
 	if err != nil {
 		log.Fatal(err)
 	}
+	dbS, err = sql.Open("mysql", "go_app:go_pass@tcp(mysqlslave:3306)/go_app_db")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }

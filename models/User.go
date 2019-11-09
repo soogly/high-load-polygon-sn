@@ -18,14 +18,14 @@ type User struct {
 	Lastname  string
 }
 
-// CreateUser функция создает запись в бн=д и возвращает структуру юзера с id новойзаписи
+// CreateUser функция создает запись в бд и возвращает структуру юзера с id новойзаписи
 func CreateUser(firstname string, lastname string, email string, password string) (*User, error) {
 
 	hashedPsswd := utils.HashAndSalt([]byte(password))
 
 	// userID that will be returned after SQL insertion
 
-	result, err := db.Exec("INSERT INTO users (firstname, lastname, email, password) values (?, ?, ?, ?)",
+	result, err := dbM.Exec("INSERT INTO users (firstname, lastname, email, password) values (?, ?, ?, ?)",
 		firstname, lastname, email, hashedPsswd)
 
 	usr := new(User)
@@ -41,7 +41,7 @@ func CreateUser(firstname string, lastname string, email string, password string
 // UsersList вернёт срез структур User сформированных из строк таблицы  Users
 func UsersList() ([]*User, error) {
 
-	rows, err := db.Query("SELECT id, email, firstname, lastname FROM users")
+	rows, err := dbS.Query("SELECT id, email, firstname, lastname FROM users")
 
 	if err != nil {
 		log.Fatal(err)
@@ -68,7 +68,7 @@ func UsersList() ([]*User, error) {
 func UserProfile(userID string) (*User, error) {
 
 	usr := new(User)
-	row := db.QueryRow("SELECT id, email, firstname, lastname FROM users WHERE id = ?", userID)
+	row := dbS.QueryRow("SELECT id, email, firstname, lastname FROM users WHERE id = ?", userID)
 	err := row.Scan(&usr.ID, &usr.Email, &usr.Firstname, &usr.Lastname)
 
 	if err != nil {
@@ -84,7 +84,7 @@ func LoginUser(email string, password string) (*Session, error) {
 	usr := new(User)
 	var hashedPswrd string
 
-	row := db.QueryRow("SELECT id, firstname, lastname, email, password FROM users WHERE email = ?", email)
+	row := dbS.QueryRow("SELECT id, firstname, lastname, email, password FROM users WHERE email = ?", email)
 	err := row.Scan(&usr.ID, &usr.Firstname, &usr.Lastname, &usr.Email, &hashedPswrd)
 	if err != nil && err == sql.ErrNoRows {
 		return nil, errors.New("wrong email")
@@ -101,11 +101,11 @@ func LoginUser(email string, password string) (*Session, error) {
 // GetCurrentUser взять текущего юзера из сессии
 func GetCurrentUser(sessID string) (*User, error) {
 	usr := new(User)
-	row := db.QueryRow(`SELECT id, firstname, lastname, email FROM users 
-						WHERE id = (SELECT s.user_id FROM sessions s WHERE 
-									s.sessid = ? 
-									AND s.expires >= CURRENT_TIMESTAMP
-									ORDER BY expires DESC LIMIT 1)`, sessID)
+	row := dbS.QueryRow(`SELECT id, firstname, lastname, email FROM users 
+						 WHERE id = (SELECT s.user_id FROM sessions s WHERE 
+									 s.sessid = ? 
+									 AND s.expires >= CURRENT_TIMESTAMP
+									 ORDER BY expires DESC LIMIT 1)`, sessID)
 	err := row.Scan(&usr.ID, &usr.Firstname, &usr.Lastname, &usr.Email)
 	if err != nil && err == sql.ErrNoRows {
 		return nil, errors.New("no sessions")
@@ -142,7 +142,7 @@ func SearchUsers(query string) ([]*User, error) {
 				 AND lastname LIKE ? ORDER BY id;`
 	}
 
-	rows, err := db.Query(query, firstname, lastname)
+	rows, err := dbS.Query(query, firstname, lastname)
 
 	if err != nil {
 		log.Println("serach user")

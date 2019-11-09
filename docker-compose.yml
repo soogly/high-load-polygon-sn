@@ -53,12 +53,8 @@ services:
       - ./templates:/templates
       - ./assets:/assets
       - ./pain:/pain
-    command: 
-      - /bin/sh 
-      - -c 
-      - |
-        nginx -g "daemon off;" 
-        ./pain
+    command: >
+      bash -c "nginx -g \"daemon off;\"; ./pain"
     networks:
       - replication
     links:
