@@ -8,8 +8,8 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-var dbS *sql.DB
-var dbM *sql.DB
+var dbM *sql.DB // Master db
+var dbS *sql.DB // Slave db
 
 func init() {
 	var err error

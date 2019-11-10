@@ -31,14 +31,19 @@ func CreateSession(userID int64) (*Session, error) {
 	sess.UserID = userID
 	sess.SessID = randStringRunes(20)
 
+	var curTime time.Time = time.Now()
+
 	_, err := dbM.Exec(`INSERT INTO sessions (sessid, user_id, expires)
-						values (?, ?, DATE_ADD(NOW(), INTERVAL 1 DAY))`, sess.SessID, userID)
+						values (?, ?, DATE_ADD(?, INTERVAL 1 DAY))`, sess.SessID, userID, curTime)
 
 	return sess, err
 }
 
 // CloseSession закрываем сессию
 func CloseSession(sessID string) error {
-	_, err := dbM.Exec("UPDATE sessions SET expires = CURRENT_TIMESTAMP WHERE sessid = ?", sessID)
+
+	var curTime time.Time = time.Now()
+
+	_, err := dbM.Exec("UPDATE sessions SET expires = ? WHERE sessid = ?", curTime, sessID)
 	return err
 }

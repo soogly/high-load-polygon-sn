@@ -18,7 +18,7 @@ type User struct {
 	Lastname  string
 }
 
-// CreateUser функция создает запись в бд и возвращает структуру юзера с id новойзаписи
+// CreateUser функция создает запись в бд и возвращает структуру юзера с id новой записи
 func CreateUser(firstname string, lastname string, email string, password string) (*User, error) {
 
 	hashedPsswd := utils.HashAndSalt([]byte(password))
@@ -29,7 +29,12 @@ func CreateUser(firstname string, lastname string, email string, password string
 		firstname, lastname, email, hashedPsswd)
 
 	usr := new(User)
-	usr.ID, _ = result.LastInsertId()
+	log.Println(0)
+	usr.ID, err = result.LastInsertId()
+	log.Println(1)
+	log.Println(usr.ID)
+	log.Println(err)
+
 	usr.Email = email
 	usr.Firstname = firstname
 	usr.Lastname = lastname

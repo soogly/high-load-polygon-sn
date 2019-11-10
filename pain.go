@@ -233,7 +233,9 @@ func searchUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sessID := utils.Cookie(r, "sessID")
+	// sessID := utils.Cookie(r, "sessID")
+	sessID := "la-la-wrong-sessID"
+
 	var currentUser *models.User
 	if sessID != "" {
 		currentUser, err = models.GetCurrentUser(sessID)

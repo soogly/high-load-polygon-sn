@@ -8,6 +8,7 @@ services:
       - ./db/data/mysql-master:/var/lib/mysql/
       - ./db/config/mysql-master:/etc/mysql/conf.d/
       - ./db/dump.sql:/docker-entrypoint-initdb.d/go_app_db_dump.sql
+      - ./db/generate_sessions.sql:/docker-entrypoint-initdb.d/generate_sessions.sql
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       replication:
