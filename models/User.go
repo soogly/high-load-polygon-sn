@@ -109,7 +109,7 @@ func GetCurrentUser(sessID string) (*User, error) {
 	row := dbS.QueryRow(`SELECT id, firstname, lastname, email FROM users 
 						 WHERE id = (SELECT s.user_id FROM sessions s WHERE 
 									 s.sessid = ? 
-									 AND s.expires >= CURRENT_TIMESTAMP
+									 AND s.expires > CURRENT_TIMESTAMP
 									 ORDER BY expires DESC LIMIT 1)`, sessID)
 	err := row.Scan(&usr.ID, &usr.Firstname, &usr.Lastname, &usr.Email)
 	if err != nil && err == sql.ErrNoRows {

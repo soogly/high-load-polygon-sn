@@ -9,6 +9,10 @@ import (
 )
 
 var dbM *sql.DB // Master db
+
+// DbM Master
+var DbM *sql.DB
+
 var dbS *sql.DB // Slave db
 
 func init() {
@@ -17,9 +21,13 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	dbS, err = sql.Open("mysql", "go_app:go_pass@tcp(mysqlslave:3306)/go_app_db")
+	dbS, err = sql.Open("mysql", "go_app:go_pass@tcp(mysqlslave_1:3308)/go_app_db")
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	DbM, err = sql.Open("mysql", "go_app:go_pass@tcp(172.23.0.4:3306)/go_app_db")
+	if err != nil {
+		log.Fatal(err)
+	}
 }

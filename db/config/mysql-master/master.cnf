@@ -1,6 +1,16 @@
 [mysqld]
 server-id=1
 log-bin=mysql-bin
+
+binlog_format=ROW
+gtid_mode=ON
+enforce_gtid_consistency=ON
+rpl_semi_sync_master_wait_point=AFTER_SYNC
+rpl_semi_sync_master_wait_for_slave_count=1
+plugin-load=rpl_semi_sync_master=semisync_master.so
+rpl_semi_sync_master_enabled=1
+
+
 log-slave-updates=1
 datadir=/var/lib/mysql/
 innodb_flush_log_at_trx_commit = 2

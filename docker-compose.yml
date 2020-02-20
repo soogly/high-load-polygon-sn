@@ -7,9 +7,9 @@ services:
     volumes:
       - ./db/data/mysql-master:/var/lib/mysql/
       - ./db/config/mysql-master:/etc/mysql/conf.d/
-      - ./db/dump.sql:/docker-entrypoint-initdb.d/go_app_db_dump.sql
-      - ./db/generate_sessions.sql:/docker-entrypoint-initdb.d/generate_sessions.sql
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/dump.sql:/go_app_db_dump.sql
+
     networks:
       replication:
         aliases:
@@ -17,18 +17,31 @@ services:
     ports:
       - "3306:3306"
 
-  mysqlslave:
+  mysqlslave_1:
     image: mysql:5.7
     environment:
       - "MYSQL_ROOT_PASSWORD=root"
     volumes:
-      - ./db/data/mysql-slave:/var/lib/mysql/
-      - ./db/config/mysql-slave:/etc/mysql/conf.d/
+      - ./db/data/mysql-slave-1:/var/lib/mysql/
+      - ./db/dump.sql:/docker-entrypoint-initdb.d/go_app_db_dump.sql
+      - ./db/config/mysql-slave/slave_1.cnf:/etc/mysql/conf.d/slave.cnf
     networks:
       - replication
     ports:
       - "3308:3306"
 
+  mysqlslave_2:
+    image: mysql:5.7
+    environment:
+      - "MYSQL_ROOT_PASSWORD=root"
+    volumes:
+      - ./db/data/mysql-slave-2:/var/lib/mysql/
+      - ./db/config/mysql-slave/slave_2.cnf:/etc/mysql/conf.d/slave.cnf
+    networks:
+      - replication
+    ports:
+      - "3309:3306"
+  
   mysqlconfigure:
     image: mysql:5.7.15
     environment:
@@ -65,3 +78,11 @@ services:
      
 networks:
   replication:
+
+
+    # CHANGE MASTER TO
+    #    MASTER_HOST='mysqlslave_1',
+    #    MASTER_USER='repl',
+    #    MASTER_PASSWORD='repl',
+    #    MASTER_LOG_FILE='mysql-bin.000009',
+    #    MASTER_LOG_POS= 500;

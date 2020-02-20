@@ -1,0 +1,11 @@
+pain
+*/venv/
+nginx/logs/*
+db/data/*
+loadtests/wrk/output/*
+loadtests/wrk/venv
+loadtests/wrk/venv/
+loadtests/wrk/venv/*
+
+vitess/
+*.swp
