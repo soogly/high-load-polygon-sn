@@ -5,9 +5,9 @@ import numpy as np
 
 path = os.path.dirname(os.path.abspath(__file__))
 output_dir = os.path.join(path, 'output')
-users_dir = os.path.join(output_dir, 'users')
+users_dir = os.path.join(output_dir, 'conomy')
 
-testing_module = 'search-users'
+testing_module = 'data'
 module_dir = os.path.join(users_dir, testing_module)
 
 
@@ -15,7 +15,7 @@ module_dir = os.path.join(users_dir, testing_module)
 # testing_set = 'with_index_OR'
 
 # testing_set = 'no_index_UNION'
-testing_set = 'repl_rslave'
+testing_set = 'get-dividends-SBER'
 
 
 files = os.listdir(os.path.join(module_dir, testing_set))
@@ -23,7 +23,7 @@ files = os.listdir(os.path.join(module_dir, testing_set))
 data = []
 for fname in files:
     params = fname.split("-")
-    if len(params) == 4 and params[1] == "d60" and fname.endswith('R1'):
+    if len(params) == 4 and params[1] == "d30" and fname.endswith('R10'):
         bar = {"conn": int([p[1:] for p in params if p.startswith('c')][0])}
         with open(os.path.join(os.path.join(module_dir, testing_set), fname), 'r') as f:
             for line in f.readlines():
@@ -70,5 +70,6 @@ p2 = plt.bar(conns, errs, hatch='//')
 
 plt.legend((p1[0], p2[0]), ('Success requests', 'Non-2xx or 3xx responses'))
 
-plt.suptitle(f'Latency & Requsts p/s [{testing_set}]')
+plt.suptitle('Latency & Requsts p/s')
+# plt.suptitle(f'Latency & Requsts p/s [{testing_set}]')
 plt.show()
