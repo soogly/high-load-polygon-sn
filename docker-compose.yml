@@ -1,67 +1,48 @@
 version: '3'
 services:
-  mysqlmaster:
-    image: mysql:5.7.15
-    environment:
-      - "MYSQL_ROOT_PASSWORD=root"
-    volumes:
-      - ./db/data/mysql-master:/var/lib/mysql/
-      - ./db/config/mysql-master:/etc/mysql/conf.d/
-      - ./db/dump.sql:/docker-entrypoint-initdb.d/go_app_db_dump.sql
-      - ./db/generate_sessions.sql:/docker-entrypoint-initdb.d/generate_sessions.sql
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      replication:
-        aliases:
-          - mysqlmaster
-    ports:
-      - "3306:3306"
-
-  mysqlslave:
-    image: mysql:5.7
-    environment:
-      - "MYSQL_ROOT_PASSWORD=root"
-    volumes:
-      - ./db/data/mysql-slave:/var/lib/mysql/
-      - ./db/config/mysql-slave:/etc/mysql/conf.d/
-    networks:
-      - replication
-    ports:
-      - "3308:3306"
-
-  mysqlconfigure:
-    image: mysql:5.7.15
-    environment:
-      - "MYSQL_SLAVE_PASSWORD=root"
-      - "MYSQL_MASTER_PASSWORD=root"
-      - "MYSQL_ROOT_PASSWORD=root"
-      - "MYSQL_REPLICATION_USER=repl"
-      - "MYSQL_REPLICATION_PASSWORD=repl"
-    volumes:
-      - ./db/mysql_connector.sh:/tmp/mysql_connector.sh
-    command: /bin/bash -x /tmp/mysql_connector.sh
-    networks:
-      - replication
-
   go_nginx:
     image: nginx
     restart: always
     ports:
       - "80:80"
     volumes:
-      - ./nginx/logs:/var/log/nginx
-      - ./nginx/dev.conf:/etc/nginx/nginx.conf
-      - ./templates:/templates
+      - ./dudes/nginx/logs:/var/log/nginx
+      - ./dudes/nginx/dev.conf:/etc/nginx/nginx.conf
+      - ./dudes/templates:/templates
       - ./assets:/assets
-      - ./pain:/pain
-    command: >
-      bash -c "nginx -g \"daemon off;\"; ./pain"
+      - ./dudes/boil:/boil
+      - ./dudes/entrypoint.sh:/entrypoint.sh
+    entrypoint: /entrypoint.sh
     networks:
-      - replication
-    links:
-      - mysqlmaster
-    depends_on:
-      - mysqlmaster
-     
+      - mservises
+      - replicated_pg_cluster
+    environment: 
+      DB_MASTER_URL: "postgres://postgres:postgres@pg-master/go_app_db?sslmode=disable"
+      DB_SLAVE_URL: "postgres://postgres:postgres@pg-slave/go_app_db?sslmode=disable"
+    links: 
+      - timing_ms 
+
+  timing_ms:
+    image: ubuntu
+    restart: always
+    ports:
+      - "90:3030"
+    volumes:
+      - ./timing/main:/main
+    command: >
+      bash -c "./main"
+    networks:
+      - mservises
+      - replicated_pg_cluster
+    environment: 
+      DB_MASTER_URL: "postgres://postgres:postgres@pg-master/timing_db?sslmode=disable"
+      DB_SLAVE_URL: "postgres://postgres:postgres@pg-slave/timing_db?sslmode=disable"
+
 networks:
-  replication:
+  replicated_pg_cluster:
+    external: true
+  mservises:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16

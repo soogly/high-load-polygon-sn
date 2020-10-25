@@ -1,0 +1,29 @@
+{{ define "users" }}
+
+{{ template "header" }}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8"></div>
+        {{ if .currentUser }}
+        <div class="col-md-4">Текущий Пользователь: {{ .currentUser.Email }}</div>
+        {{ else }}
+        <div class="col-md-4">Вы не авторизованы</div>
+        {{ end }}
+    </div>
+    <div class="content">
+        {{ range .users }}    
+            <div class="row">
+                <div class="col-sm-3">{{ . }}</div>
+            </div>
+        {{ end }}
+    </div>
+</div>
+
+
+{{ template "footer" }}
+
+{{ end }}
+
+
+
