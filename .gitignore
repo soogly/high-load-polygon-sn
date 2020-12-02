@@ -6,3 +6,4 @@ loadtests
 pain
 start.sh
 .idea
+.gitignore
