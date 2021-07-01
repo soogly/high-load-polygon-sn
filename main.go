@@ -11,6 +11,8 @@ import (
 	"github.com/hl/utils"
 )
 
+// текст которого нет в мастер
+
 func main() {
 	fmt.Println("listening on port :3000")
 
